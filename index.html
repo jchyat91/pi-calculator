@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PI Payment Allocator — PNI</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0d1117; --card-bg: #161b22; --input-bg: #0d1117;
@@ -15,108 +14,118 @@
     --yellow: #d29922; --yellow-bg: rgba(210,153,34,0.08); --yellow-border: rgba(210,153,34,0.3);
     --border: #30363d; --border-light: #21262d;
     --hover-bg: rgba(88,166,255,0.06); --shadow: rgba(0,0,0,0.4);
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
-  input, select { font-family: inherit; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); }
+  input, select { font-family: var(--font); }
   input:focus, select:focus { border-color: var(--accent) !important; outline: none; }
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
+ 
   .container { max-width: 1000px; margin: 0 auto; padding: 28px 20px; }
   .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; }
   .card-inner { padding: 20px; }
   .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); display: block; margin-bottom: 8px; }
-
+ 
   .header { margin-bottom: 28px; }
   .header-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
   .header-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; border: 1px solid rgba(88,166,255,0.2); }
   .header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
   .header p { color: var(--text-secondary); font-size: 13px; margin-left: 42px; }
-
-  #check-input { width: 100%; padding: 14px 14px 14px 32px; font-size: 28px; font-weight: 700; font-family: 'DM Mono', monospace; background: var(--input-bg); color: var(--text); border: 2px solid var(--border); border-radius: 10px; outline: none; }
+ 
+  #check-input { width: 100%; padding: 14px 14px 14px 32px; font-size: 28px; font-weight: 700; font-family: var(--mono); background: var(--input-bg); color: var(--text); border: 2px solid var(--border); border-radius: 10px; outline: none; }
   .dollar-sign { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 20px; font-weight: 700; color: var(--text-dim); }
-
-  #search-input { width: 100%; padding: 10px 14px; font-size: 14px; font-family: 'DM Mono', monospace; background: var(--input-bg); color: var(--text); border: 2px solid var(--border); border-radius: 8px; outline: none; }
+ 
+  #search-input { width: 100%; padding: 10px 14px; font-size: 14px; font-family: var(--mono); background: var(--input-bg); color: var(--text); border: 2px solid var(--border); border-radius: 8px; outline: none; }
   .search-wrap { position: relative; }
   .dropdown { position: absolute; top: 100%; left: 0; right: 0; z-index: 100; background: var(--card-bg); border: 2px solid var(--border); border-radius: 8px; max-height: 280px; overflow-y: auto; margin-top: 4px; box-shadow: 0 12px 32px var(--shadow); display: none; }
   .dropdown.open { display: block; }
   .dropdown-item { padding: 10px 14px; cursor: pointer; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border-light); transition: background 0.15s; }
   .dropdown-item:hover { background: var(--hover-bg); }
-  .dropdown-item .cpt { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--accent); min-width: 56px; }
+  .dropdown-item .cpt { font-family: var(--mono); font-weight: 700; color: var(--accent); min-width: 56px; }
   .dropdown-item .desc { color: var(--text-secondary); font-size: 13px; flex: 1; }
   .dropdown-item .cat-badge { font-size: 10px; color: var(--text-dim); background: var(--border-light); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
-  .dropdown-item .rate { font-family: 'DM Mono', monospace; color: var(--text-dim); font-size: 13px; }
+  .dropdown-item .rate { font-family: var(--mono); color: var(--text-dim); font-size: 13px; }
   .dropdown-empty { padding: 12px 14px; color: var(--text-dim); font-size: 13px; }
-
+ 
   .table-header { display: grid; grid-template-columns: 80px 1fr 110px 60px 140px 110px 110px 36px; gap: 8px; padding: 12px 16px; background: var(--border-light); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
   .line-row { display: grid; grid-template-columns: 80px 1fr 110px 60px 140px 110px 110px 36px; gap: 8px; padding: 10px 16px; align-items: center; border-top: 1px solid var(--border-light); animation: fadeIn 0.25s ease-out; }
-  .line-row .cpt { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--accent); font-size: 13px; }
+  .line-row .cpt { font-family: var(--mono); font-weight: 700; color: var(--accent); font-size: 13px; }
   .line-row .desc { font-size: 12px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rate-wrap { position: relative; }
   .rate-wrap .ds { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 12px; }
-  .rate-input { width: 100%; padding: 6px 8px 6px 22px; font-size: 13px; font-family: 'DM Mono', monospace; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); }
+  .rate-input { width: 100%; padding: 6px 8px 6px 22px; font-size: 13px; font-family: var(--mono); background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); }
   .rate-input.overridden { color: var(--yellow); border-color: var(--yellow); }
-  .units-input { width: 100%; padding: 6px 8px; font-size: 13px; text-align: center; font-family: 'DM Mono', monospace; background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; }
+  .units-input { width: 100%; padding: 6px 8px; font-size: 13px; text-align: center; font-family: var(--mono); background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; }
   .mod-select { width: 100%; padding: 6px 8px; font-size: 12px; background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
-  .threex-val { text-align: right; font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; }
-  .alloc-val { text-align: right; font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 700; }
+  .threex-val { text-align: right; font-family: var(--mono); font-size: 13px; font-weight: 500; }
+  .alloc-val { text-align: right; font-family: var(--mono); font-size: 13px; font-weight: 700; }
   .alloc-full { color: var(--green); }
   .alloc-short { color: var(--red); }
   .remove-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
   .remove-btn:hover { background: var(--red-bg); color: var(--red); }
-
+ 
   .summary-row { display: flex; justify-content: space-between; align-items: center; }
   .summary-label { color: var(--text-secondary); font-size: 13px; }
-  .summary-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; }
+  .summary-val { font-family: var(--mono); font-size: 16px; font-weight: 600; }
   .summary-divider { border-top: 1px solid var(--border); padding-top: 12px; }
   .surplus-label { font-weight: 700; font-size: 14px; }
-  .surplus-box { padding: 8px 16px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 800; }
+  .surplus-box { padding: 8px 16px; border-radius: 8px; font-family: var(--mono); font-size: 20px; font-weight: 800; }
   .surplus-pos { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
   .surplus-neg { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
-
+ 
   .empty-state { text-align: center; padding: 48px 20px; color: var(--text-dim); font-size: 13px; background: var(--card-bg); border-radius: 12px; border: 1px dashed var(--border); margin-bottom: 16px; }
   .footer { color: var(--text-dim); font-size: 10px; margin-top: 16px; text-align: center; }
-
-  /* Fee Schedule Manager */
+ 
   .toggle-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 12px; font-weight: 600; background: var(--border-light); color: var(--text-secondary); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.15s; }
   .toggle-btn:hover { background: var(--hover-bg); color: var(--accent); border-color: var(--accent); }
   .toggle-btn.active { background: var(--accent-glow); color: var(--accent); border-color: rgba(88,166,255,0.3); }
-
+ 
   .fs-panel { display: none; }
   .fs-panel.open { display: block; }
-
+ 
+  .mult-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-light); }
+  .mult-row:last-child { border-bottom: none; }
+  .mult-cat { font-size: 13px; font-weight: 600; }
+  .mult-input-wrap { display: flex; align-items: center; gap: 6px; }
+  .mult-input { width: 60px; padding: 6px 8px; font-size: 14px; font-weight: 700; font-family: var(--mono); background: var(--input-bg); color: var(--accent); border: 1px solid var(--border); border-radius: 6px; text-align: center; }
+  .mult-x { font-size: 12px; color: var(--text-dim); font-weight: 600; }
   .fs-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
   .fs-toolbar .small-btn { padding: 6px 12px; font-size: 11px; font-weight: 600; background: var(--border-light); color: var(--text-secondary); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.15s; }
   .fs-toolbar .small-btn:hover { background: var(--hover-bg); color: var(--text); }
   .fs-toolbar .small-btn.green:hover { color: var(--green); border-color: var(--green); }
   .fs-toolbar .small-btn.red:hover { color: var(--red); border-color: var(--red); }
   .fs-count { font-size: 11px; color: var(--text-dim); margin-left: auto; }
-
+ 
   .fs-add-row { display: grid; grid-template-columns: 80px 1fr 100px 110px 36px; gap: 8px; padding: 10px 16px; align-items: center; border-top: 1px solid var(--border-light); background: var(--accent-glow); }
-  .fs-add-row input { padding: 6px 8px; font-size: 12px; font-family: 'DM Mono', monospace; background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; width: 100%; }
+  .fs-add-row input { padding: 6px 8px; font-size: 12px; font-family: var(--mono); background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; width: 100%; }
   .fs-add-row .add-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: var(--green-bg); color: var(--green); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
   .fs-add-row .add-btn:hover { background: var(--green); color: var(--bg); }
-
+ 
   .fs-table-header { display: grid; grid-template-columns: 80px 1fr 100px 110px 36px; gap: 8px; padding: 10px 16px; background: var(--border-light); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
   .fs-row { display: grid; grid-template-columns: 80px 1fr 100px 110px 36px; gap: 8px; padding: 8px 16px; align-items: center; border-top: 1px solid var(--border-light); font-size: 12px; transition: background 0.1s; }
   .fs-row:hover { background: rgba(255,255,255,0.02); }
-  .fs-row .cpt { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--accent); font-size: 12px; }
+  .fs-row .cpt { font-family: var(--mono); font-weight: 700; color: var(--accent); font-size: 12px; }
   .fs-row .desc { color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .fs-row .cat { color: var(--text-dim); font-size: 11px; }
-  .fs-row .rate { font-family: 'DM Mono', monospace; color: var(--text); font-size: 12px; }
-  .fs-row .user-added { color: var(--yellow); }
-  .fs-search { width: 100%; padding: 8px 12px; font-size: 13px; font-family: 'DM Mono', monospace; background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
-
+  .fs-row .rate { font-family: var(--mono); color: var(--text); font-size: 12px; }
+  .fs-search { width: 100%; padding: 8px 12px; font-size: 13px; font-family: var(--mono); background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
+ 
   .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 200; animation: fadeIn 0.2s ease-out; display: none; }
   .toast.success { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
   .toast.info { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+ 
+  #error-box { display: none; background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); padding: 16px 20px; border-radius: 10px; margin: 20px auto; max-width: 1000px; font-size: 13px; font-family: var(--mono); white-space: pre-wrap; }
 </style>
 </head>
 <body>
-
+ 
+<div id="error-box"></div>
+ 
 <div class="container">
   <div class="header">
     <div class="header-row">
@@ -125,8 +134,7 @@
     </div>
     <p>Allocate PI check payments at 3&times; Medicare Allowable (Locality 99)</p>
   </div>
-
-  <!-- Check Amount -->
+ 
   <div class="card"><div class="card-inner">
     <label class="label">Check Amount</label>
     <div style="position:relative">
@@ -134,20 +142,29 @@
       <input type="text" id="check-input" placeholder="0.00">
     </div>
   </div></div>
-
-  <!-- Add CPT Code -->
+ 
   <div class="card"><div class="card-inner">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <label class="label" style="margin-bottom:0">Add CPT Code</label>
-      <button class="toggle-btn" id="fs-toggle" title="Manage fee schedule">&#9881; Fee Schedule</button>
+      <div style="display:flex;gap:8px">
+        <button class="toggle-btn" id="mult-toggle">&#215; Multipliers</button>
+        <button class="toggle-btn" id="fs-toggle">&#9881; Fee Schedule</button>
+      </div>
     </div>
     <div class="search-wrap">
       <input type="text" id="search-input" placeholder="Search CPT code, description, or category...">
       <div class="dropdown" id="dropdown"></div>
     </div>
   </div></div>
-
-  <!-- Fee Schedule Manager Panel -->
+ 
+  <div id="mult-panel" class="fs-panel">
+    <div class="card"><div class="card-inner">
+      <label class="label">Category Multipliers</label>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Set the multiplier for each category. Medicare rate &times; multiplier = allowable amount.</p>
+      <div id="mult-body"></div>
+    </div></div>
+  </div>
+ 
   <div id="fs-panel" class="fs-panel">
     <div class="card"><div class="card-inner">
       <label class="label">Fee Schedule Manager</label>
@@ -159,13 +176,12 @@
         <span class="fs-count" id="fs-count"></span>
       </div>
       <input type="text" class="fs-search" id="fs-search" placeholder="Filter codes...">
-      <!-- Add new code row -->
       <div class="fs-add-row">
         <input type="text" id="fs-new-cpt" placeholder="CPT" style="text-transform:uppercase">
         <input type="text" id="fs-new-desc" placeholder="Description">
         <input type="text" id="fs-new-cat" placeholder="Category">
         <input type="text" id="fs-new-rate" placeholder="Rate">
-        <button class="add-btn" id="fs-add-btn" title="Add code">+</button>
+        <button class="add-btn" id="fs-add-btn">+</button>
       </div>
       <div class="fs-table-header">
         <span>CPT</span><span>Description</span><span>Category</span><span style="text-align:right">Medicare Rate</span><span></span>
@@ -173,18 +189,16 @@
       <div id="fs-body" style="max-height:400px;overflow-y:auto"></div>
     </div></div>
   </div>
-
-  <!-- Line Items -->
+ 
   <div id="lines-card" class="card" style="display:none;overflow:hidden">
     <div class="table-header">
       <span>CPT</span><span>Description</span><span>Medicare Rate</span>
-      <span>Units</span><span>Modifier</span><span style="text-align:right">3&times; Allow.</span>
+      <span>Units</span><span>Modifier</span><span style="text-align:right">Allowable</span>
       <span style="text-align:right">Allocated</span><span></span>
     </div>
     <div id="lines-body"></div>
   </div>
-
-  <!-- Summary -->
+ 
   <div id="summary-card" class="card" style="display:none"><div class="card-inner">
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="summary-row">
@@ -192,7 +206,7 @@
         <span class="summary-val" id="sum-check">$0.00</span>
       </div>
       <div class="summary-row">
-        <span class="summary-label" id="sum-codes-label">Total 3&times; Allowable (0 codes)</span>
+        <span class="summary-label" id="sum-codes-label">Total Allowable (0 codes)</span>
         <span class="summary-val" id="sum-total">$0.00</span>
       </div>
       <div class="summary-row summary-divider">
@@ -203,7 +217,7 @@
         <span class="summary-label">Deductions / Costs</span>
         <div style="position:relative;width:180px">
           <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:14px;font-weight:600">$</span>
-          <input type="text" id="deductions-input" placeholder="0.00" style="width:100%;padding:8px 10px 8px 24px;font-size:16px;font-weight:600;font-family:'DM Mono',monospace;background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:8px;text-align:right;outline:none">
+          <input type="text" id="deductions-input" placeholder="0.00" style="width:100%;padding:8px 10px 8px 24px;font-size:16px;font-weight:600;font-family:var(--mono);background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:8px;text-align:right;outline:none">
         </div>
       </div>
       <div class="summary-row" style="border-top:2px solid var(--accent);padding-top:12px;margin-top:4px">
@@ -212,15 +226,28 @@
       </div>
     </div>
   </div></div>
-
+ 
   <div id="empty-state" class="empty-state">Search for a CPT code above to start allocating</div>
-
+ 
   <p class="footer">Locality 99 (Rest of FL) Medicare Allowable rates per PNI fee schedule. Yellow-highlighted rates have been manually overridden.</p>
 </div>
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
+// Catch any errors and show them visibly
+window.onerror = function(msg, url, line, col, err) {
+  var box = document.getElementById("error-box");
+  if (box) {
+    box.style.display = "block";
+    box.textContent = "Error: " + msg + " (line " + line + ")";
+  }
+  return false;
+};
+ 
+document.addEventListener("DOMContentLoaded", function() {
+"use strict";
+ 
 // ========================
 // DEFAULT FEE SCHEDULE
 // ========================
@@ -327,9 +354,9 @@ var DEFAULT_FEES = [
   { cpt: "96136", desc: "Psych/Neuropsych Test Admin-First 30 min", rate: 62.38, cat: "Testing" },
   { cpt: "96137", desc: "Psych/Neuropsych Test Admin-Add'l 30 min (add-on)", rate: 54.12, cat: "Testing" },
   { cpt: "22514", desc: "Perc Kyphoplasty 1 Vert Body", rate: 278.46, cat: "Kyphoplasty" },
-  { cpt: "22513", desc: "Kyphoplasty, First Thoracic or Lumbar Body", rate: 572.34, cat: "Kyphoplasty" },
+  { cpt: "22513", desc: "Kyphoplasty, First Thoracic or Lumbar Body", rate: 572.34, cat: "Kyphoplasty" }
 ];
-
+ 
 var MODIFIERS = [
   { code: "", label: "None", multiplier: 1.0 },
   { code: "22", label: "22 - Increased Procedural Services", multiplier: 1.0 },
@@ -357,356 +384,424 @@ var MODIFIERS = [
   { code: "XE", label: "XE - Separate Encounter", multiplier: 1.0 },
   { code: "XP", label: "XP - Separate Practitioner", multiplier: 1.0 },
   { code: "XS", label: "XS - Separate Structure", multiplier: 1.0 },
-  { code: "XU", label: "XU - Unusual Non-Overlapping Service", multiplier: 1.0 },
+  { code: "XU", label: "XU - Unusual Non-Overlapping Service", multiplier: 1.0 }
 ];
-
+ 
 // ========================
-// PERSISTENCE
+// PERSISTENCE (safe for file://)
 // ========================
-var STORAGE_KEY = "pni_fee_schedule";
-var storageAvailable = false;
-try {
-  var test = "__storage_test__";
-  localStorage.setItem(test, test);
-  localStorage.removeItem(test);
-  storageAvailable = true;
-} catch(e) {
-  storageAvailable = false;
-}
-
-function loadFeeSchedule() {
-  if (storageAvailable) {
+var storageOK = false;
+try { var _t = "__t__"; localStorage.setItem(_t, _t); localStorage.removeItem(_t); storageOK = true; } catch(e) { storageOK = false; }
+ 
+function loadFS() {
+  if (storageOK) {
     try {
-      var saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        var parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
+      var s = localStorage.getItem("pni_fs");
+      if (s) { var p = JSON.parse(s); if (Array.isArray(p) && p.length) return p; }
     } catch(e) {}
   }
-  return JSON.parse(JSON.stringify(DEFAULT_FEES));
+  return DEFAULT_FEES.slice();
 }
-
-function saveFeeSchedule() {
-  if (storageAvailable) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(FEE_SCHEDULE)); } catch(e) {}
-  }
+ 
+function saveFS() {
+  if (storageOK) { try { localStorage.setItem("pni_fs", JSON.stringify(FEE_SCHEDULE)); } catch(e) {} }
 }
-
-var FEE_SCHEDULE = loadFeeSchedule();
-
+ 
+var FEE_SCHEDULE = loadFS();
+ 
 // ========================
-// UTILITIES
+// UTILS
 // ========================
-var fmt = function(n) { return n.toLocaleString("en-US", { style: "currency", currency: "USD" }); };
-var esc = function(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
-var $ = function(id) { return document.getElementById(id); };
-
+function fmt(n) { return "$" + (Math.round(n * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+function esc(s) { var d = document.createElement("div"); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+function gel(id) { return document.getElementById(id); }
+ 
 function showToast(msg, type) {
-  var t = $("toast");
+  var t = gel("toast");
   t.textContent = msg;
   t.className = "toast " + (type || "success");
   t.style.display = "block";
-  clearTimeout(t._tid);
+  if (t._tid) clearTimeout(t._tid);
   t._tid = setTimeout(function() { t.style.display = "none"; }, 2500);
 }
-
+ 
+// ========================
+// ELEMENTS
+// ========================
+var checkInput = gel("check-input");
+var deductionsInput = gel("deductions-input");
+var searchInput = gel("search-input");
+var dropdown = gel("dropdown");
+var linesBody = gel("lines-body");
+ 
 // ========================
 // FEE SCHEDULE MANAGER
 // ========================
-var fsPanel = $("fs-panel");
-var fsToggle = $("fs-toggle");
-var fsBody = $("fs-body");
-var fsSearch = $("fs-search");
-
-fsToggle.addEventListener("click", function() {
-  var open = fsPanel.classList.toggle("open");
-  fsToggle.classList.toggle("active", open);
+gel("fs-toggle").addEventListener("click", function() {
+  var p = gel("fs-panel");
+  var open = p.classList.toggle("open");
+  this.classList.toggle("active", open);
   if (open) renderFS();
 });
-
+ 
 function renderFS() {
-  var q = fsSearch.value.trim().toLowerCase();
+  var q = gel("fs-search").value.trim().toLowerCase();
   var filtered = FEE_SCHEDULE;
   if (q) {
     filtered = FEE_SCHEDULE.filter(function(f) {
-      return f.cpt.toLowerCase().indexOf(q) !== -1 || f.desc.toLowerCase().indexOf(q) !== -1 || f.cat.toLowerCase().indexOf(q) !== -1;
+      return f.cpt.toLowerCase().indexOf(q) !== -1 || f.desc.toLowerCase().indexOf(q) !== -1 || (f.cat || "").toLowerCase().indexOf(q) !== -1;
     });
   }
-
-  $("fs-count").textContent = FEE_SCHEDULE.length + " codes" + (q ? " (" + filtered.length + " shown)" : "");
-
-  fsBody.innerHTML = "";
+  gel("fs-count").textContent = FEE_SCHEDULE.length + " codes" + (q ? " (" + filtered.length + " shown)" : "");
+  var body = gel("fs-body");
+  body.innerHTML = "";
   filtered.forEach(function(item) {
     var row = document.createElement("div");
     row.className = "fs-row";
     row.innerHTML =
       '<span class="cpt">' + esc(item.cpt) + '</span>' +
       '<span class="desc" title="' + esc(item.desc) + '">' + esc(item.desc) + '</span>' +
-      '<span class="cat">' + esc(item.cat) + '</span>' +
+      '<span class="cat">' + esc(item.cat || "") + '</span>' +
       '<span class="rate" style="text-align:right">' + fmt(item.rate) + '</span>' +
-      '<button class="remove-btn" title="Remove">\u00d7</button>';
+      '<button class="remove-btn">\u00d7</button>';
     row.querySelector(".remove-btn").addEventListener("click", function() {
       var idx = FEE_SCHEDULE.indexOf(item);
-      if (idx !== -1) {
-        FEE_SCHEDULE.splice(idx, 1);
-        saveFeeSchedule();
-        renderFS();
-        showToast(item.cpt + " removed");
-      }
+      if (idx !== -1) { FEE_SCHEDULE.splice(idx, 1); saveFS(); renderFS(); showToast(item.cpt + " removed"); }
     });
-    fsBody.appendChild(row);
+    body.appendChild(row);
   });
 }
-
-fsSearch.addEventListener("input", renderFS);
-
-// Add new code
-$("fs-add-btn").addEventListener("click", addNewCode);
-$("fs-new-rate").addEventListener("keydown", function(e) { if (e.key === "Enter") addNewCode(); });
-
+ 
+gel("fs-search").addEventListener("input", renderFS);
+ 
 function addNewCode() {
-  var cpt = $("fs-new-cpt").value.trim().toUpperCase();
-  var desc = $("fs-new-desc").value.trim();
-  var cat = $("fs-new-cat").value.trim();
-  var rate = parseFloat($("fs-new-rate").value) || 0;
-
-  if (!cpt) { $("fs-new-cpt").focus(); return; }
-  if (!desc) { $("fs-new-desc").focus(); return; }
-
-  // Check for duplicate
-  var existing = FEE_SCHEDULE.findIndex(function(f) { return f.cpt === cpt; });
-  if (existing !== -1) {
-    FEE_SCHEDULE[existing] = { cpt: cpt, desc: desc, rate: rate, cat: cat || "Custom" };
+  var cpt = gel("fs-new-cpt").value.trim().toUpperCase();
+  var desc = gel("fs-new-desc").value.trim();
+  var cat = gel("fs-new-cat").value.trim() || "Custom";
+  var rate = parseFloat(gel("fs-new-rate").value) || 0;
+  if (!cpt) { gel("fs-new-cpt").focus(); return; }
+  if (!desc) { gel("fs-new-desc").focus(); return; }
+  var idx = -1;
+  for (var i = 0; i < FEE_SCHEDULE.length; i++) { if (FEE_SCHEDULE[i].cpt === cpt) { idx = i; break; } }
+  if (idx !== -1) {
+    FEE_SCHEDULE[idx] = { cpt: cpt, desc: desc, rate: rate, cat: cat };
     showToast(cpt + " updated", "info");
   } else {
-    FEE_SCHEDULE.push({ cpt: cpt, desc: desc, rate: rate, cat: cat || "Custom" });
+    FEE_SCHEDULE.push({ cpt: cpt, desc: desc, rate: rate, cat: cat });
     showToast(cpt + " added");
   }
-
-  saveFeeSchedule();
-  $("fs-new-cpt").value = "";
-  $("fs-new-desc").value = "";
-  $("fs-new-cat").value = "";
-  $("fs-new-rate").value = "";
-  $("fs-new-cpt").focus();
+  saveFS();
+  gel("fs-new-cpt").value = ""; gel("fs-new-desc").value = ""; gel("fs-new-cat").value = ""; gel("fs-new-rate").value = "";
+  gel("fs-new-cpt").focus();
   renderFS();
 }
-
-// Export
-$("fs-export").addEventListener("click", function() {
+ 
+gel("fs-add-btn").addEventListener("click", addNewCode);
+gel("fs-new-rate").addEventListener("keydown", function(e) { if (e.key === "Enter") addNewCode(); });
+ 
+gel("fs-export").addEventListener("click", function() {
   var blob = new Blob([JSON.stringify(FEE_SCHEDULE, null, 2)], { type: "application/json" });
   var a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "pni_fee_schedule.json";
-  a.click();
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   showToast("Fee schedule exported");
 });
-
-// Import
-$("fs-import-btn").addEventListener("click", function() { $("fs-import-file").click(); });
-$("fs-import-file").addEventListener("change", function(e) {
+ 
+gel("fs-import-btn").addEventListener("click", function() { gel("fs-import-file").click(); });
+gel("fs-import-file").addEventListener("change", function(e) {
   var file = e.target.files[0];
   if (!file) return;
   var reader = new FileReader();
   reader.onload = function(ev) {
     try {
       var data = JSON.parse(ev.target.result);
-      if (!Array.isArray(data)) throw new Error("Not an array");
-      FEE_SCHEDULE = data.map(function(d) {
-        return { cpt: String(d.cpt || ""), desc: String(d.desc || ""), rate: parseFloat(d.rate) || 0, cat: String(d.cat || "Custom") };
-      });
-      saveFeeSchedule();
-      renderFS();
+      if (!Array.isArray(data)) throw new Error("Bad format");
+      FEE_SCHEDULE.length = 0;
+      for (var i = 0; i < data.length; i++) {
+        var d = data[i];
+        FEE_SCHEDULE.push({ cpt: String(d.cpt || ""), desc: String(d.desc || ""), rate: parseFloat(d.rate) || 0, cat: String(d.cat || "Custom") });
+      }
+      saveFS(); renderFS();
       showToast(FEE_SCHEDULE.length + " codes imported");
-    } catch(err) {
-      showToast("Invalid JSON file", "info");
-    }
+    } catch(err) { showToast("Invalid JSON file", "info"); }
   };
   reader.readAsText(file);
   e.target.value = "";
 });
-
-// Reset
-$("fs-reset").addEventListener("click", function() {
+ 
+gel("fs-reset").addEventListener("click", function() {
   if (confirm("Reset fee schedule to built-in defaults? This will remove any codes you added.")) {
-    FEE_SCHEDULE = JSON.parse(JSON.stringify(DEFAULT_FEES));
-    saveFeeSchedule();
-    renderFS();
+    FEE_SCHEDULE.length = 0;
+    for (var i = 0; i < DEFAULT_FEES.length; i++) FEE_SCHEDULE.push({ cpt: DEFAULT_FEES[i].cpt, desc: DEFAULT_FEES[i].desc, rate: DEFAULT_FEES[i].rate, cat: DEFAULT_FEES[i].cat });
+    saveFS(); renderFS();
     showToast("Reset to " + FEE_SCHEDULE.length + " default codes");
   }
 });
-
+ 
 // ========================
 // ALLOCATOR
 // ========================
 var lines = [];
 var lineId = 0;
-var checkInput = $("check-input");
-var searchInput = $("search-input");
-var dropdown = $("dropdown");
-var linesBody = $("lines-body");
-
+ 
 checkInput.addEventListener("input", function(e) {
   e.target.value = e.target.value.replace(/[^0-9.]/g, "");
   recalc();
 });
-
-$("deductions-input").addEventListener("input", function(e) {
+ 
+deductionsInput.addEventListener("input", function(e) {
   e.target.value = e.target.value.replace(/[^0-9.]/g, "");
   recalc();
 });
-
+ 
 searchInput.addEventListener("input", updateDropdown);
 searchInput.addEventListener("focus", updateDropdown);
 searchInput.addEventListener("keydown", function(e) {
   if (e.key === "Enter" && searchInput.value.trim()) {
     var q = searchInput.value.trim();
-    var match = FEE_SCHEDULE.find(function(f) { return f.cpt.toLowerCase() === q.toLowerCase(); });
+    var match = null;
+    for (var i = 0; i < FEE_SCHEDULE.length; i++) { if (FEE_SCHEDULE[i].cpt.toLowerCase() === q.toLowerCase()) { match = FEE_SCHEDULE[i]; break; } }
     if (match) addLine(match);
     else addLine({ cpt: q.toUpperCase(), desc: "Custom Code", rate: 0, cat: "Custom" });
     searchInput.value = "";
     dropdown.classList.remove("open");
   }
 });
-
+ 
 document.addEventListener("mousedown", function(e) {
   if (!e.target.closest(".search-wrap")) dropdown.classList.remove("open");
 });
-
+ 
 function updateDropdown() {
   var q = searchInput.value.trim().toLowerCase();
   if (!q) { dropdown.classList.remove("open"); return; }
-  var results = FEE_SCHEDULE.filter(function(f) {
-    return f.cpt.toLowerCase().indexOf(q) !== -1 || f.desc.toLowerCase().indexOf(q) !== -1 || f.cat.toLowerCase().indexOf(q) !== -1;
-  }).slice(0, 12);
-
+  var results = [];
+  for (var i = 0; i < FEE_SCHEDULE.length && results.length < 12; i++) {
+    var f = FEE_SCHEDULE[i];
+    if (f.cpt.toLowerCase().indexOf(q) !== -1 || f.desc.toLowerCase().indexOf(q) !== -1 || (f.cat || "").toLowerCase().indexOf(q) !== -1) {
+      results.push(f);
+    }
+  }
   dropdown.innerHTML = "";
   if (results.length === 0) {
     dropdown.innerHTML = '<div class="dropdown-empty">No match \u2014 press Enter to add "' + esc(searchInput.value) + '" as a custom code</div>';
   } else {
-    results.forEach(function(item) {
-      var div = document.createElement("div");
-      div.className = "dropdown-item";
-      div.innerHTML =
-        '<span class="cpt">' + esc(item.cpt) + '</span>' +
-        '<span class="desc">' + esc(item.desc) + '</span>' +
-        (item.cat ? '<span class="cat-badge">' + esc(item.cat) + '</span>' : '') +
-        '<span class="rate">' + (item.rate > 0 ? fmt(item.rate) : "\u2014") + '</span>';
-      div.addEventListener("click", function() {
-        addLine(item);
-        searchInput.value = "";
-        dropdown.classList.remove("open");
-      });
-      dropdown.appendChild(div);
-    });
+    for (var j = 0; j < results.length; j++) {
+      (function(item) {
+        var div = document.createElement("div");
+        div.className = "dropdown-item";
+        div.innerHTML =
+          '<span class="cpt">' + esc(item.cpt) + '</span>' +
+          '<span class="desc">' + esc(item.desc) + '</span>' +
+          (item.cat ? '<span class="cat-badge">' + esc(item.cat) + '</span>' : '') +
+          '<span class="rate">' + (item.rate > 0 ? fmt(item.rate) : "\u2014") + '</span>';
+        div.addEventListener("click", function() {
+          addLine(item);
+          searchInput.value = "";
+          dropdown.classList.remove("open");
+        });
+        dropdown.appendChild(div);
+      })(results[j]);
+    }
   }
   dropdown.classList.add("open");
 }
-
+ 
 function addLine(item) {
-  lines.push({ id: ++lineId, cpt: item.cpt, desc: item.desc, baseRate: item.rate, rateOverride: "", units: 1, modifier: "" });
+  lines.push({ id: ++lineId, cpt: item.cpt, desc: item.desc, baseRate: item.rate, rateOverride: "", units: 1, modifier: "", cat: item.cat || "" });
   renderLines();
 }
-
+ 
 function removeLine(id) {
-  lines = lines.filter(function(l) { return l.id !== id; });
+  var n = [];
+  for (var i = 0; i < lines.length; i++) { if (lines[i].id !== id) n.push(lines[i]); }
+  lines = n;
   renderLines();
 }
-
+ 
 function getEffectiveRate(line) {
   var base = line.rateOverride !== "" ? (parseFloat(line.rateOverride) || 0) : line.baseRate;
-  var mod = MODIFIERS.find(function(m) { return m.code === line.modifier; });
+  var mod = null;
+  for (var i = 0; i < MODIFIERS.length; i++) { if (MODIFIERS[i].code === line.modifier) { mod = MODIFIERS[i]; break; } }
   return base * (mod ? mod.multiplier : 1.0);
 }
-
+ 
+// ========================
+// MULTIPLIER SETTINGS
+// ========================
+var DEFAULT_MULTIPLIERS = {
+  "E/M New": 2, "E/M Est": 2, "E/M": 2, "Consult": 2, "Testing": 2
+};
+var MULT_DEFAULT = 3;
+ 
+function loadMultipliers() {
+  if (storageOK) {
+    try {
+      var s = localStorage.getItem("pni_mult");
+      if (s) { var p = JSON.parse(s); if (typeof p === "object" && p !== null) return p; }
+    } catch(e) {}
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_MULTIPLIERS));
+}
+ 
+function saveMultipliers() {
+  if (storageOK) { try { localStorage.setItem("pni_mult", JSON.stringify(catMultipliers)); } catch(e) {} }
+}
+ 
+var catMultipliers = loadMultipliers();
+ 
+function getMultiplier(cat) {
+  var c = cat || "";
+  if (catMultipliers.hasOwnProperty(c)) return catMultipliers[c];
+  // Check partial match
+  var cl = c.toLowerCase();
+  for (var key in catMultipliers) {
+    if (catMultipliers.hasOwnProperty(key) && cl.indexOf(key.toLowerCase()) !== -1) return catMultipliers[key];
+  }
+  return MULT_DEFAULT;
+}
+ 
+function getUniqueCategories() {
+  var cats = {};
+  for (var i = 0; i < FEE_SCHEDULE.length; i++) {
+    var c = FEE_SCHEDULE[i].cat || "Other";
+    if (!cats[c]) cats[c] = true;
+  }
+  var result = [];
+  for (var k in cats) { if (cats.hasOwnProperty(k)) result.push(k); }
+  result.sort();
+  return result;
+}
+ 
+gel("mult-toggle").addEventListener("click", function() {
+  var p = gel("mult-panel");
+  var open = p.classList.toggle("open");
+  this.classList.toggle("active", open);
+  if (open) renderMultPanel();
+});
+ 
+function renderMultPanel() {
+  var body = gel("mult-body");
+  body.innerHTML = "";
+  var cats = getUniqueCategories();
+  for (var i = 0; i < cats.length; i++) {
+    (function(cat) {
+      var val = catMultipliers.hasOwnProperty(cat) ? catMultipliers[cat] : MULT_DEFAULT;
+      var row = document.createElement("div");
+      row.className = "mult-row";
+      row.innerHTML =
+        '<span class="mult-cat">' + esc(cat) + '</span>' +
+        '<div class="mult-input-wrap">' +
+          '<input type="text" class="mult-input" value="' + val + '">' +
+          '<span class="mult-x">&times; Medicare</span>' +
+        '</div>';
+      row.querySelector(".mult-input").addEventListener("input", function(e) {
+        e.target.value = e.target.value.replace(/[^0-9.]/g, "");
+        var v = parseFloat(e.target.value);
+        if (!isNaN(v)) {
+          catMultipliers[cat] = v;
+          saveMultipliers();
+          recalc();
+        }
+      });
+      body.appendChild(row);
+    })(cats[i]);
+  }
+}
+ 
 function recalc() {
   var check = parseFloat(checkInput.value) || 0;
-  var calcs = lines.map(function(line) {
-    return { id: line.id, threeX: getEffectiveRate(line) * 3 * line.units };
-  });
-  var total3X = calcs.reduce(function(s, l) { return s + l.threeX; }, 0);
-
+  var calcs = [];
+  var totalAllow = 0;
+  for (var i = 0; i < lines.length; i++) {
+    var mult = getMultiplier(lines[i].cat);
+    var t = getEffectiveRate(lines[i]) * mult * lines[i].units;
+    calcs.push({ id: lines[i].id, threeX: t });
+    totalAllow += t;
+  }
+ 
   var remaining = check;
-  calcs.forEach(function(l) {
-    l.allocated = Math.min(l.threeX, Math.max(remaining, 0));
-    remaining -= l.allocated;
-  });
-
-  calcs.forEach(function(l) {
-    var t = document.querySelector('[data-threex="' + l.id + '"]');
-    var a = document.querySelector('[data-alloc="' + l.id + '"]');
-    if (t) t.textContent = fmt(l.threeX);
-    if (a) {
-      a.textContent = fmt(l.allocated);
-      a.className = "alloc-val " + (l.allocated < l.threeX && l.threeX > 0 ? "alloc-short" : "alloc-full");
+  for (var j = 0; j < calcs.length; j++) {
+    calcs[j].allocated = Math.min(calcs[j].threeX, Math.max(remaining, 0));
+    remaining -= calcs[j].allocated;
+  }
+ 
+  for (var k = 0; k < calcs.length; k++) {
+    var te = document.querySelector('[data-threex="' + calcs[k].id + '"]');
+    var ae = document.querySelector('[data-alloc="' + calcs[k].id + '"]');
+    if (te) te.textContent = fmt(calcs[k].threeX);
+    if (ae) {
+      ae.textContent = fmt(calcs[k].allocated);
+      ae.className = "alloc-val " + (calcs[k].allocated < calcs[k].threeX && calcs[k].threeX > 0 ? "alloc-short" : "alloc-full");
     }
-  });
-
-  $("sum-check").textContent = fmt(check);
-  $("sum-codes-label").textContent = "Total 3\u00d7 Allowable (" + lines.length + " code" + (lines.length !== 1 ? "s" : "") + ")";
-  $("sum-total").textContent = fmt(total3X);
-
+  }
+ 
+  gel("sum-check").textContent = fmt(check);
+  gel("sum-codes-label").textContent = "Total Allowable (" + lines.length + " code" + (lines.length !== 1 ? "s" : "") + ")";
+  gel("sum-total").textContent = fmt(totalAllow);
+ 
   var surplus = remaining;
-  $("surplus-label").textContent = surplus >= 0 ? "Surplus / Remainder" : "Shortfall";
-  var box = $("surplus-box");
+  gel("surplus-label").textContent = surplus >= 0 ? "Surplus / Remainder" : "Shortfall";
+  var box = gel("surplus-box");
   box.textContent = (surplus >= 0 ? "+" : "") + fmt(surplus);
   box.className = "surplus-box " + (surplus >= 0 ? "surplus-pos" : "surplus-neg");
-
-  var deductions = parseFloat($("deductions-input").value) || 0;
+ 
+  var deductions = parseFloat(deductionsInput.value) || 0;
   var profit = surplus - deductions;
-  var profitBox = $("profit-box");
-  profitBox.textContent = (profit >= 0 ? "+" : "") + fmt(profit);
-  profitBox.className = "surplus-box " + (profit >= 0 ? "surplus-pos" : "surplus-neg");
+  var pb = gel("profit-box");
+  pb.textContent = (profit >= 0 ? "+" : "") + fmt(profit);
+  pb.className = "surplus-box " + (profit >= 0 ? "surplus-pos" : "surplus-neg");
 }
-
+ 
 function renderLines() {
   var hasLines = lines.length > 0;
-  $("lines-card").style.display = hasLines ? "block" : "none";
-  $("summary-card").style.display = hasLines ? "block" : "none";
-  $("empty-state").style.display = hasLines ? "none" : "block";
-
+  gel("lines-card").style.display = hasLines ? "block" : "none";
+  gel("summary-card").style.display = hasLines ? "block" : "none";
+  gel("empty-state").style.display = hasLines ? "none" : "block";
+ 
   linesBody.innerHTML = "";
-  lines.forEach(function(line) {
-    var row = document.createElement("div");
-    row.className = "line-row";
-    var ov = line.rateOverride !== "";
-    var modOpts = MODIFIERS.map(function(m) {
-      return '<option value="' + m.code + '"' + (m.code === line.modifier ? " selected" : "") + '>' + esc(m.label) + '</option>';
-    }).join("");
-
-    row.innerHTML =
-      '<span class="cpt">' + esc(line.cpt) + '</span>' +
-      '<span class="desc" title="' + esc(line.desc) + '">' + esc(line.desc) + '</span>' +
-      '<div class="rate-wrap"><span class="ds">$</span><input type="text" class="rate-input' + (ov ? ' overridden' : '') + '" value="' + (ov ? esc(line.rateOverride) : line.baseRate) + '" data-field="rate" title="' + (ov ? 'Overridden (default: ' + fmt(line.baseRate) + ')' : 'Fee schedule rate') + '"></div>' +
-      '<input type="number" class="units-input" value="' + line.units + '" min="1" data-field="units">' +
-      '<select class="mod-select" data-field="modifier">' + modOpts + '</select>' +
-      '<span class="threex-val" data-threex="' + line.id + '"></span>' +
-      '<span class="alloc-val" data-alloc="' + line.id + '"></span>' +
-      '<button class="remove-btn">\u00d7</button>';
-
-    var lid = line.id;
-    row.querySelector('[data-field="rate"]').addEventListener("input", function(e) {
-      e.target.value = e.target.value.replace(/[^0-9.]/g, "");
-      var l = lines.find(function(x) { return x.id === lid; });
-      if (l) { l.rateOverride = e.target.value; e.target.classList.toggle("overridden", l.rateOverride !== ""); }
-      recalc();
-    });
-    row.querySelector('[data-field="units"]').addEventListener("input", function(e) {
-      var l = lines.find(function(x) { return x.id === lid; });
-      if (l) l.units = Math.max(1, parseInt(e.target.value) || 1);
-      recalc();
-    });
-    row.querySelector('[data-field="modifier"]').addEventListener("change", function(e) {
-      var l = lines.find(function(x) { return x.id === lid; });
-      if (l) l.modifier = e.target.value;
-      recalc();
-    });
-    row.querySelector(".remove-btn").addEventListener("click", function() { removeLine(lid); });
-    linesBody.appendChild(row);
-  });
+  for (var i = 0; i < lines.length; i++) {
+    (function(line) {
+      var row = document.createElement("div");
+      row.className = "line-row";
+      var ov = line.rateOverride !== "";
+      var modHtml = "";
+      for (var m = 0; m < MODIFIERS.length; m++) {
+        modHtml += '<option value="' + MODIFIERS[m].code + '"' + (MODIFIERS[m].code === line.modifier ? " selected" : "") + '>' + esc(MODIFIERS[m].label) + '</option>';
+      }
+      row.innerHTML =
+        '<span class="cpt">' + esc(line.cpt) + '</span>' +
+        '<span class="desc" title="' + esc(line.desc) + '">' + esc(line.desc) + '</span>' +
+        '<div class="rate-wrap"><span class="ds">$</span><input type="text" class="rate-input' + (ov ? ' overridden' : '') + '" value="' + (ov ? esc(line.rateOverride) : line.baseRate) + '" data-field="rate"></div>' +
+        '<input type="number" class="units-input" value="' + line.units + '" min="1" data-field="units">' +
+        '<select class="mod-select" data-field="modifier">' + modHtml + '</select>' +
+        '<span class="threex-val" data-threex="' + line.id + '"></span>' +
+        '<span class="alloc-val" data-alloc="' + line.id + '"></span>' +
+        '<button class="remove-btn">\u00d7</button>';
+ 
+      row.querySelector('[data-field="rate"]').addEventListener("input", function(e) {
+        e.target.value = e.target.value.replace(/[^0-9.]/g, "");
+        line.rateOverride = e.target.value;
+        e.target.classList.toggle("overridden", line.rateOverride !== "");
+        recalc();
+      });
+      row.querySelector('[data-field="units"]').addEventListener("input", function(e) {
+        line.units = Math.max(1, parseInt(e.target.value) || 1);
+        recalc();
+      });
+      row.querySelector('[data-field="modifier"]').addEventListener("change", function(e) {
+        line.modifier = e.target.value;
+        recalc();
+      });
+      row.querySelector(".remove-btn").addEventListener("click", function() { removeLine(line.id); });
+      linesBody.appendChild(row);
+    })(lines[i]);
+  }
   recalc();
 }
+ 
+}); // end DOMContentLoaded
 </script>
 </body>
 </html>
