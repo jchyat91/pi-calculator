@@ -147,6 +147,7 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <label class="label" style="margin-bottom:0">Add CPT Code</label>
       <div style="display:flex;gap:8px">
+        <button class="toggle-btn" id="mod-toggle">% Modifiers</button>
         <button class="toggle-btn" id="mult-toggle">&#215; Multipliers</button>
         <button class="toggle-btn" id="fs-toggle">&#9881; Fee Schedule</button>
       </div>
@@ -156,6 +157,14 @@
       <div class="dropdown" id="dropdown"></div>
     </div>
   </div></div>
+ 
+  <div id="mod-panel" class="fs-panel">
+    <div class="card"><div class="card-inner">
+      <label class="label">Modifier Adjustments</label>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Set the percentage each modifier pays relative to the full allowable. 100% = no reduction.</p>
+      <div id="mod-body"></div>
+    </div></div>
+  </div>
  
   <div id="mult-panel" class="fs-panel">
     <div class="card"><div class="card-inner">
@@ -375,7 +384,7 @@ var MODIFIERS = [
   { code: "77", label: "77 - Repeat Procedure, Another Physician", multiplier: 1.0 },
   { code: "78", label: "78 - Unplanned Return to OR", multiplier: 1.0 },
   { code: "79", label: "79 - Unrelated Proc During Postop", multiplier: 1.0 },
-  { code: "80", label: "80 - Assistant Surgeon", multiplier: 1.0 },
+  { code: "80", label: "80 - Assistant Surgeon", multiplier: 0.5 },
   { code: "81", label: "81 - Minimum Assistant Surgeon", multiplier: 1.0 },
   { code: "82", label: "82 - Assistant Surgeon (No Resident)", multiplier: 1.0 },
   { code: "LT", label: "LT - Left Side", multiplier: 1.0 },
@@ -408,6 +417,39 @@ function saveFS() {
 }
  
 var FEE_SCHEDULE = loadFS();
+ 
+// ========================
+// MODIFIER PERSISTENCE
+// ========================
+function loadModMultipliers() {
+  if (storageOK) {
+    try {
+      var s = localStorage.getItem("pni_mod_mult");
+      if (s) {
+        var saved = JSON.parse(s);
+        if (typeof saved === "object" && saved !== null) {
+          for (var i = 0; i < MODIFIERS.length; i++) {
+            if (saved.hasOwnProperty(MODIFIERS[i].code)) {
+              MODIFIERS[i].multiplier = saved[MODIFIERS[i].code];
+            }
+          }
+        }
+      }
+    } catch(e) {}
+  }
+}
+ 
+function saveModMultipliers() {
+  if (storageOK) {
+    try {
+      var obj = {};
+      for (var i = 0; i < MODIFIERS.length; i++) { obj[MODIFIERS[i].code] = MODIFIERS[i].multiplier; }
+      localStorage.setItem("pni_mod_mult", JSON.stringify(obj));
+    } catch(e) {}
+  }
+}
+ 
+loadModMultipliers();
  
 // ========================
 // UTILS
@@ -672,6 +714,45 @@ function getUniqueCategories() {
   for (var k in cats) { if (cats.hasOwnProperty(k)) result.push(k); }
   result.sort();
   return result;
+}
+ 
+// ========================
+// MODIFIER EDITOR PANEL
+// ========================
+gel("mod-toggle").addEventListener("click", function() {
+  var p = gel("mod-panel");
+  var open = p.classList.toggle("open");
+  this.classList.toggle("active", open);
+  if (open) renderModPanel();
+});
+ 
+function renderModPanel() {
+  var body = gel("mod-body");
+  body.innerHTML = "";
+  for (var i = 0; i < MODIFIERS.length; i++) {
+    if (MODIFIERS[i].code === "") continue; // skip "None"
+    (function(mod) {
+      var pct = Math.round(mod.multiplier * 100);
+      var row = document.createElement("div");
+      row.className = "mult-row";
+      row.innerHTML =
+        '<span class="mult-cat">' + esc(mod.label) + '</span>' +
+        '<div class="mult-input-wrap">' +
+          '<input type="text" class="mult-input" value="' + pct + '" style="width:70px">' +
+          '<span class="mult-x">%</span>' +
+        '</div>';
+      row.querySelector(".mult-input").addEventListener("input", function(e) {
+        e.target.value = e.target.value.replace(/[^0-9.]/g, "");
+        var v = parseFloat(e.target.value);
+        if (!isNaN(v)) {
+          mod.multiplier = v / 100;
+          saveModMultipliers();
+          recalc();
+        }
+      });
+      body.appendChild(row);
+    })(MODIFIERS[i]);
+  }
 }
  
 gel("mult-toggle").addEventListener("click", function() {
